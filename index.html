@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ウルトラマン クイズ</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            background-color: rgb(245, 174, 222);
+            display: block;
+            margin: 0 auto;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <img src="https://manpukuoyakudati.com/wp-content/uploads/2023/01/unnamed-2-1.jpg" height="200px">
+    <div class="describe">ご希望の質問数(1~100)を入力してください</div>
+    <input type="number" id="number" style="width:50px;"><button id="number" onclick="confirm()">確認</button>
+    <a href="test.html">題庫</a>
+    <div id="quiz">
+    </div>
+
+
+</body>
+<script>
+
+    let i = 0;
+    let correct = 0;
+    var quiz_numbers = [];
+    var number;
+    var answer;
+    function confirm() {
+        let number = numberEl.value;
+        let count = 0;
+
+        while (true) {
+            let n = getRandomInt(0, 799);
+            if (!quiz_numbers.includes(n)) {
+                quiz_numbers.push(n);
+                count += 1;
+            }
+            if (count == number) {
+                break;
+            }
+        }
+        d3.csv('ウルトラマン_クイズ.csv').then(function (data) {
+            let d = data[quiz_numbers[i]];
+            let answer = d['答案'];
+
+            if (answer == "A") {
+                quizEl.innerHTML = `
+                <div class="question">Q1. ${d['題目']}</div>
+                <button id="choose" onclick="Y()">A. ${d['A']}</button><br>
+                <button id="choose" onclick="N()">B. ${d['B']}</button><br>
+                <button id="choose" onclick="N()">C. ${d['C']}</button><br>
+                <button id="choose" onclick="N()">D. ${d['D']}</button>`
+            } else if (answer == "B") {
+                quizEl.innerHTML = `
+                <div class="question">Q1. ${d['題目']}</div>
+                <button id="choose" onclick="N()">A. ${d['A']}</button><br>
+                <button id="choose" onclick="Y()">B. ${d['B']}</button><br>
+                <button id="choose" onclick="N()">C. ${d['C']}</button><br>
+                <button id="choose" onclick="N()">D. ${d['D']}</button>`
+            } else if (answer == "C") {
+                quizEl.innerHTML = `
+                <div class="question">Q1. ${d['題目']}</div>
+                <button id="choose" onclick="N()">A. ${d['A']}</button><br>
+                <button id="choose" onclick="N()">B. ${d['B']}</button><br>
+                <button id="choose" onclick="Y()">C. ${d['C']}</button><br>
+                <button id="choose" onclick="N()">D. ${d['D']}</button>`
+            } else if (answer == "D") {
+                quizEl.innerHTML = `
+                <div class="question">Q1. ${d['題目']}</div>
+                <button id="choose" onclick="N()">A. ${d['A']}</button><br>
+                <button id="choose" onclick="N()">B. ${d['B']}</button><br>
+                <button id="choose" onclick="N()">C. ${d['C']}</button><br>
+                <button id="choose" onclick="Y()">D. ${d['D']}</button>`
+            }
+        });
+
+    }
+    function next() {
+        let number = numberEl.value;
+        if (i != number - 1) {
+            console.log(number)
+            i += 1
+            d3.csv('ウルトラマン_クイズ.csv').then(function (data) {
+                let d = data[quiz_numbers[i]];
+                let answer = d['答案'];
+                if (answer == "A") {
+                    quizEl.innerHTML = `
+                <div class="question">Q${i + 1}. ${d['題目']}</div>
+                <button id="choose" onclick="Y()">A. ${d['A']}</button><br>
+                <button id="choose" onclick="N()">B. ${d['B']}</button><br>
+                <button id="choose" onclick="N()">C. ${d['C']}</button><br>
+                <button id="choose" onclick="N()">D. ${d['D']}</button>`
+                } else if (answer == "B") {
+                    quizEl.innerHTML = `
+                <div class="question">Q${i + 1}. ${d['題目']}</div>
+                <button id="choose" onclick="N()">A. ${d['A']}</button><br>
+                <button id="choose" onclick="Y()">B. ${d['B']}</button><br>
+                <button id="choose" onclick="N()">C. ${d['C']}</button><br>
+                <button id="choose" onclick="N()">D. ${d['D']}</button>`
+                } else if (answer == "C") {
+                    quizEl.innerHTML = `
+                <div class="question">Q${i + 1}. ${d['題目']}</div>
+                <button id="choose" onclick="N()">A. ${d['A']}</button><br>
+                <button id="choose" onclick="N()">B. ${d['B']}</button><br>
+                <button id="choose" onclick="Y()">C. ${d['C']}</button><br>
+                <button id="choose" onclick="N()">D. ${d['D']}</button>`
+                } else if (answer == "D") {
+                    quizEl.innerHTML = `
+                <div class="question">Q${i + 1}. ${d['題目']}</div>
+                <button id="choose" onclick="N()">A. ${d['A']}</button><br>
+                <button id="choose" onclick="N()">B. ${d['B']}</button><br>
+                <button id="choose" onclick="N()">C. ${d['C']}</button><br>
+                <button id="choose" onclick="Y()">D. ${d['D']}</button>`
+                }
+            });
+        } else {
+            quizEl.innerHTML = `回答終了<br>スコア: ${correct}/${number}`
+        }
+
+    }
+
+    function Y() {
+
+        correct += 1;
+        quizEl.innerHTML = `<div style="color:green;">正解です</div>
+        <button onclick="next()">次に</button>`
+
+    }
+    function N() {
+
+        quizEl.innerHTML = `<div style="color:red;">不正解です</div>
+        <button onclick="next()">次に</button>`
+
+    }
+
+    const numberEl = document.querySelector("#number");
+    const quizEl = document.querySelector("#quiz");
+    const chooseEl = document.querySelector("#choose");
+    function getRandomInt(start, end) {
+        return Math.floor(Math.random() * (end - start + 1)) + start;
+    }
+</script>
+
+</html>
